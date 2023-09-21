@@ -73,6 +73,10 @@ class Classroom extends Model
     {
         return $this->hasMany(Topic::class , 'classroom_id');
     }
+    public function posts()
+    {
+        return $this->hasMany(Post::class);
+    }
     public function user():BelongsTo
     {
         return $this->belongsTo(User::class );

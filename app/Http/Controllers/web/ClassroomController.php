@@ -211,6 +211,14 @@ class ClassroomController extends Controller
     }
 
 
+    public function chat(Classroom $classroom)
+    {
+        return view('classroom.chat' , [
+            'classroom' => $classroom,
+        ]);
+    }
+
+
 }
 
 

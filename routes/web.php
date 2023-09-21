@@ -48,6 +48,8 @@ Route::post('/payments/stripe/webhook', StripeController::class);
 
 Route::middleware(['auth'])->group(callback: function () {
 
+    Route::post('classroom/{classroom}/chat', [ClassroomController::class, 'chat'])->name('classrooms.chat');
+
     //subscriptions
     Route::post('subscriptions', [SubscriptionsController::class, 'store'])->name('subscriptions.store');
     Route::get('subscriptions/{subscription}/pay', [PaymentsController::class, 'create'])->name('checkout');
@@ -66,7 +68,6 @@ Route::middleware(['auth'])->group(callback: function () {
     Route::post('classroom/{classroom}/join', [JoinClassroomController::class, 'store'])->name('classroom.join.store');
 
     //chat classroom
-    Route::post('classroom/{classroom}/chat', [ClassroomController::class, 'chat'])->name('classrooms.chat');
 
 // Route for archived classrooms
     Route::post('/classrooms/archive/{classroom}', [ClassroomController::class, 'archive'])->name('classrooms.archive');
