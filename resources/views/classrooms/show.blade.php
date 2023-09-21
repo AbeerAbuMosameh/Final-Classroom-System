@@ -91,37 +91,39 @@
 
 
                                 </div>
-                                <div class="posts ">
-                                    @foreach ($classroom->posts()->latest()->get() as $post)
-                                        <div class="d-flex p-2 mt-2 align-items-center">
-                                            <img src="{{asset('assets/media/logos/post.png')}}" width="40" height="40"
-                                                 class="rounded-circle me-2" alt="">
-                                            <div class="ms-2 mt-1">
-                                                <h6>{{ $post->user?->name }} {{__('add a new post :')}} {{ $post->content }}</h6>
-                                                <span class="text-secondary">{{$post->created_at->format('j F')}}</span>
-                                            </div>
-                                        </div>
-                                    @endforeach
-
-
-                                    @foreach ($classroom->streams()->latest()->get() as $stream)
-                                        <div class="d-flex p-2 mt-2 align-items-center">
-                                            <img src="{{asset('imgs/icon.png')}}" width="40" height="40"
-                                                 class="rounded-circle me-2" alt="">
-                                            <div class="ms-2 mt-1">
-                                                <h6>{{__($stream->content)}}</h6>
-                                                <small
-                                                    class="text-secondary">{{$stream->created_at->format('j F')}}</small>
-                                                <small><a href="{{$stream->link}}"
-                                                          class="text-success fw-bold text-decoration-none">View
-                                                        instruction</a></small>
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                </div>
 
                             </div>
+
+                        <div class="posts">
+                            @foreach ($classroom->posts()->latest()->get() as $post)
+                                <div class="card mb-3">
+                                    <div class="card-body d-flex p-2 mt-2 align-items-center">
+                                        <img src="{{ asset('assets/media/logos/post.png') }}" width="40" height="40"
+                                             class="rounded-circle me-2" alt="">
+                                        <div class="ms-2 mt-1">
+                                            <h6>{{ $post->user?->name }} {{ __('add a new post:') }} {{ $post->content }}</h6>
+                                            <span class="text-secondary">{{ $post->created_at->format('j F') }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+
+                            @foreach ($classroom->streams()->latest()->get() as $stream)
+                                <div class="card mb-3">
+                                    <div class="card-body d-flex p-2 mt-2 align-items-center">
+                                        <img src="{{ asset('imgs/icon.png') }}" width="40" height="40"
+                                             class="rounded-circle me-2" alt="">
+                                        <div class="ms-2 mt-1">
+                                            <h6>{{ __($stream->content) }}</h6>
+                                            <small class="text-secondary">{{ $stream->created_at->format('j F') }}</small>
+                                            <small><a href="{{ $stream->link }}" class="text-success fw-bold text-decoration-none">View instruction</a></small>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
                         </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
