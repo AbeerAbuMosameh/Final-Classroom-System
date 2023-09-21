@@ -2,36 +2,30 @@
 
 namespace App\Listeners;
 
-use App\Events\ClassworkCreated;
-use App\Models\Classwork;
 use App\Models\User;
-use App\Notifications\NewClassworkNotification;
-use Illuminate\Contracts\Queue\ShouldQueue;
+use App\Models\Classwork;
+use App\Events\ClassworkCreated;
+use App\Jobs\SendClassroomNotification;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Notification;
+use App\Notifications\NewClassworkNotification;
 
 class SendNotificationToAssignedStudents
 {
-    /**
-     * Create the event listener.
-     */
-    public function __construct()
+
+    public function __construct(public Classwork $classwork)
     {
-        //
     }
 
-    /**
-     * Handle the event.
-     */
     public function handle(ClassworkCreated $event): void
     {
-//       $user = User::find(1);
-//       $user->notify(new NewClassworkNotification($event->classwork));
-//
-//
-//        foreach ($event->classwork->users as $user) {
-//            $user->notify(new NewClassworkNotification($event->classwork));
-//        }
-        Notification::send($event->classwork->users, new NewClassworkNotification($event->classwork));
+        $classwork = $event->classwork;
+
+        $job = new SendClassroomNotification($classwork->users, new NewClassworkNotification($classwork));
+
+        $job->onQueue('y');
+
+        dispatch($job)->onQueue('default');
     }
 }

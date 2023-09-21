@@ -1,16 +1,17 @@
 <?php
 
 
+use App\Http\Controllers\Admin\TwoFactorAuthenticationController;
 use App\Http\Controllers\web\ClassroomController;
 use App\Http\Controllers\web\ClassroomPeopleController;
 use App\Http\Controllers\web\ClassworkController;
 use App\Http\Controllers\web\CommentController;
 use App\Http\Controllers\web\JoinClassroomController;
-use App\Http\Controllers\web\PlanController;
+use App\Http\Controllers\web\PostController;
 use App\Http\Controllers\web\ProfileController;
 use App\Http\Controllers\web\SubmissionController;
-use App\Http\Controllers\web\SubscriptionController;
 use App\Http\Controllers\web\TopicController;
+use App\Http\Controllers\Webhooks\StripeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -38,12 +39,24 @@ Route::get('/', function () {
     return view('auth.login');
 })->name('home');
 
-Route::get('plans', [PlanController::class, 'index'])->name('plans');
-
+Route::get('plans', [PlansController::class, 'index'])->name('plans');
+Route::get('admin/2fa', [TwoFactorAuthenticationController::class, 'create']);
+Route::post('/payments/stripe/webhook', StripeController::class);
 
 Route::middleware(['auth'])->group(callback: function () {
 
-    Route::post('subscriptions', [SubscriptionController::class, 'store'])->name('subscriptions.store');
+    //subscriptions
+    Route::post('subscriptions', [SubscriptionsController::class, 'store'])->name('subscriptions.store');
+    Route::get('subscriptions/{subscription}/pay', [PaymentsController::class, 'create'])->name('checkout');
+
+    //payments
+    Route::post('payments', [PaymentsController::class, 'store'])->name('payments.store');
+    Route::get('payments/{subscription}/success', [PaymentsController::class, 'success'])->name('payments.success');
+    Route::get('payments/{subscription}/cancel', [PaymentsController::class, 'cancel'])->name('payments.cancel');
+
+    //posts
+    Route::post('classrooms/{classroom}/posts', [PostController::class, 'store'])
+        ->name('posts.store');
 
     //Join classroom
     Route::get('classroom/{classroom}/join', [JoinClassroomController::class, 'create'])->middleware('signed')->name('classroom.join');
@@ -71,10 +84,16 @@ Route::middleware(['auth'])->group(callback: function () {
     Route::get('/classrooms/{classroom}/people', [ClassroomPeopleController::class, 'index'])->name('classrooms.people');
     Route::delete('/classrooms/{classroom}/people', [ClassroomPeopleController::class, 'destroy'])->name('classrooms.people.destroy');
 
+    //comments
     Route::post('comment', [CommentController::class, 'store'])->name('comment.store');
+
+    //submissions
+    Route::post('classworks/{classwork}/submissions', [SubmissionController::class, 'store'])->name('submissions.store');
     Route::post('classworks/{classwork}/submissions', [SubmissionController::class, 'store'])->name('submissions.store');
     Route::get('submissions/{submission}/file', [SubmissionController::class, 'file'])->name('submissions.file');
 
+    //notifications
+    Route::get('notifications', [NotificationsController::class, 'index'])->name('notifications');
 
 });
 
